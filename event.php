@@ -30,10 +30,15 @@ $photosStmt = db()->prepare('SELECT id, file_path, caption FROM event_photos WHE
 $photosStmt->execute([$id]);
 $photos = $photosStmt->fetchAll();
 
+// Fetch attendance photos (multiple)
+$attendancePhotosStmt = db()->prepare('SELECT id, file_path FROM attendance_photos WHERE event_id = ? ORDER BY id DESC');
+$attendancePhotosStmt->execute([$id]);
+$attendancePhotos = $attendancePhotosStmt->fetchAll();
+
 $title = $event['title'] . ' - ' . APP_NAME;
 ?>
 
-<section class="card" style="margin-top:16px">
+<section class="card event-page" style="margin-top:16px">
   <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between">
     <div>
       <div class="badge"><?php echo h($event['event_type']); ?></div>
@@ -147,18 +152,31 @@ $title = $event['title'] . ' - ' . APP_NAME;
         
         <h3>Event Photos</h3>
         <?php if ($photos): ?>
-          <div class="photo-grid">
+          <div class="photo-grid" style="grid-template-columns: 1fr 1fr; gap: 15px;">
             <?php foreach ($photos as $p): ?>
-              <div class="photo-item">
-                <img src="<?php echo h($p['file_path']); ?>" style="height: 240px; width: 100%; object-fit: cover;" />
+              <div class="photo-item" style="text-align: center;">
+                <img src="<?php echo h($p['file_path']); ?>" style="height: 280px; width: 100%; object-fit: cover; border: 2px solid #e5e7eb; border-radius: 12px;" />
                 <?php if (!empty($p['caption'])): ?>
-                  <div class="photo-caption"><?php echo h($p['caption']); ?></div>
+                  <div class="photo-caption" style="margin-top: 10px; padding: 8px; font-weight: bold;"><?php echo h($p['caption']); ?></div>
                 <?php endif; ?>
               </div>
             <?php endforeach; ?>
           </div>
         <?php else: ?>
           <p>No photos uploaded for this event.</p>
+        <?php endif; ?>
+        
+        <?php if (!empty($attendancePhotos)): ?>
+          <div style="page-break-before: always;">
+            <h3>Attendance Photos</h3>
+            <div class="photo-grid" style="grid-template-columns: 1fr 1fr; gap: 15px;">
+              <?php foreach ($attendancePhotos as $ap): ?>
+                <div class="photo-item" style="text-align: center;">
+                  <img src="<?php echo h($ap['file_path']); ?>" style="height: 300px; width: 100%; object-fit: cover; border: 2px solid #e5e7eb; border-radius: 12px;" />
+                </div>
+              <?php endforeach; ?>
+            </div>
+          </div>
         <?php endif; ?>
       </div>
       <?php if (!$photos): ?>
@@ -176,6 +194,19 @@ $title = $event['title'] . ' - ' . APP_NAME;
         </div>
       <?php endif; ?>
     </div>
+
+    <?php if (!empty($attendancePhotos)): ?>
+      <div class="card" style="grid-column:1/-1; margin-top:20px;">
+        <h3 style="margin-top:0">Attendance Photos</h3>
+        <div class="grid" style="margin-top:10px">
+          <?php foreach ($attendancePhotos as $ap): ?>
+            <div class="card" style="grid-column: span 3; padding:10px">
+              <img alt="Attendance" src="<?php echo h($ap['file_path']); ?>" style="width:100%;height:200px;object-fit:cover;border-radius:12px" />
+            </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    <?php endif; ?>
     
     <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end; margin:20px 0;">
       <button class="btn primary" type="button" id="btnPdf">Download PDF</button>
@@ -210,9 +241,29 @@ $title = $event['title'] . ' - ' . APP_NAME;
       #pdfContent table { font-size: 18px; }
       #pdfContent table td { font-size: 18px; }
 
-      #pdfContent .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-      #pdfContent .photo-item { text-align: left; border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; }
-      #pdfContent .photo-item img { width: 100% !important; height: 220px !important; object-fit: cover; }
+      #pdfContent .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+      #pdfContent .photo-item { text-align: center; border: 2px solid #e5e7eb; border-radius: 12px; padding: 12px; }
+      #pdfContent .photo-item img { width: 100% !important; height: 280px !important; object-fit: cover !important; }
+      
+      /* Force attendance photos to start on new page */
+      #pdfContent div[style*="page-break-before: always"] {
+        page-break-before: always !important;
+        break-before: page !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+      
+      #pdfContent div[style*="page-break-before: always"] .photo-grid {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 15px !important;
+      }
+      
+      #pdfContent div[style*="page-break-before: always"] .photo-item {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
       #pdfContent .photo-caption { margin-top: 8px; padding: 10px; border: 1px solid #e5e7eb; border-radius: 10px; background: #f8fafc; font-weight: 700; font-size: 16px; }
 
       .photo-caption { margin-top: 8px; padding: 10px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,0.65); font-weight: 800; }
@@ -236,7 +287,12 @@ $title = $event['title'] . ' - ' . APP_NAME;
           padding: 20px !important;
           width: 100% !important;
           max-width: 100% !important;
-          page-break-before: avoid;
+        }
+        
+        /* But allow specific sections to break before */
+        #pdfContent > div[style*="page-break-before: always"] {
+          page-break-before: always !important;
+          break-before: page !important;
         }
         
         /* Hide the main report area and show only the optimized print content */
@@ -301,11 +357,35 @@ $title = $event['title'] . ' - ' . APP_NAME;
           page-break-inside: avoid;
         }
         
-        #pdfContent .photo-item img { width: 100%; height: 220px; object-fit: cover; }
+        /* Force attendance photos to start on new page */
+        #pdfContent div[style*="page-break-before: always"] {
+          page-break-before: always;
+          break-before: page;
+          page-break-after: always;
+          break-after: page;
+        }
+        
+        #pdfContent div[style*="page-break-before: always"] .photo-grid {
+          page-break-inside: avoid;
+          break-inside: avoid-page;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 15px !important;
+        }
+        
+        #pdfContent div[style*="page-break-before: always"] .photo-item {
+          page-break-inside: avoid;
+          break-inside: avoid-page;
+        }
+        
+        #pdfContent .photo-item img { width: 100%; height: auto; max-height: 600px; object-fit: contain; }
       }
       
       /* Hide pdfContent during normal viewing */
       #pdfContent {
+        display: none;
+      }
+
+      #pdfAttendance {
         display: none;
       }
     </style>
@@ -387,6 +467,8 @@ $title = $event['title'] . ' - ' . APP_NAME;
         yPx += step;
         pageIndex++;
       }
+
+
 
       const safeTitle = <?php echo json_encode(preg_replace('/[^a-zA-Z0-9_-]+/', '_', (string)$event['title'])); ?>;
       pdf.save(safeTitle + '_Event_Report.pdf');

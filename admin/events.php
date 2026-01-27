@@ -38,8 +38,10 @@ $title = 'Manage Events - ' . APP_NAME;
   </div>
 </section>
 
-<section style="margin-top:14px">
-  <table class="table">
+<section style="margin-top:14px" class="admin-table">
+  <div style="overflow-x: auto;">
+    <table class="table">
+
     <thead>
       <tr>
         <th>Title</th>
@@ -63,20 +65,23 @@ $title = 'Manage Events - ' . APP_NAME;
           <td><?php echo h($e['event_date']); ?></td>
           <td><?php echo h($e['department_name']); ?></td>
           <td><?php echo h($e['year_label']); ?></td>
-          <td>
-            <a class="btn <?php echo $e['featured'] ? 'primary' : 'danger'; ?>" href="<?php echo BASE_URL; ?>/admin/toggle_featured.php?id=<?php echo (int)$e['id']; ?>">
+          <td style="white-space: nowrap;" class="actions">
+            <a class="btn btn-sm <?php echo $e['featured'] ? 'primary' : 'danger'; ?>" href="<?php echo BASE_URL; ?>/admin/toggle_featured.php?id=<?php echo (int)$e['id']; ?>">
               <?php echo $e['featured'] ? 'Unfeature' : 'Feature'; ?>
             </a>
           </td>
-          <td style="display:flex;gap:10px;flex-wrap:wrap">
-            <a class="btn" href="<?php echo BASE_URL; ?>/admin/event_form.php?id=<?php echo (int)$e['id']; ?>">Edit</a>
-            <a class="btn" href="<?php echo BASE_URL; ?>/admin/photos.php?event_id=<?php echo (int)$e['id']; ?>">Photos</a>
-            <a class="btn danger" data-confirm="Delete this event?" href="<?php echo BASE_URL; ?>/admin/event_delete.php?id=<?php echo (int)$e['id']; ?>">Delete</a>
+          <td style="white-space: nowrap;" class="actions">
+            <div style="display: inline-flex; gap: 6px; flex-wrap: nowrap;">
+              <a class="btn btn-sm" href="<?php echo BASE_URL; ?>/admin/event_form.php?id=<?php echo (int)$e['id']; ?>">Edit</a>
+              <a class="btn btn-sm" href="<?php echo BASE_URL; ?>/admin/photos.php?event_id=<?php echo (int)$e['id']; ?>">Photos</a>
+              <a class="btn btn-sm danger" data-confirm="Delete this event?" href="<?php echo BASE_URL; ?>/admin/event_delete.php?id=<?php echo (int)$e['id']; ?>">Delete</a>
+            </div>
           </td>
         </tr>
       <?php endforeach; ?>
     </tbody>
-  </table>
+    </table>
+  </div>
 </section>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

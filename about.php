@@ -3,43 +3,95 @@ require_once __DIR__ . '/includes/header.php';
 $title = 'About - ' . APP_NAME;
 ?>
 
-<h2 class="section-title">About Our Event Portal</h2>
-
-<section class="card about-section">
-  <h3 style="margin-top:0">Why this portal?</h3>
-  <p class="muted">
-    Deogiri College Event Report Portal is designed to showcase all college events, activities, and reports in one place.
-    It helps students and faculty stay updated with events from different departments.
+<!-- Enhanced About Section -->
+<div class="hero-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 20px; margin-bottom: 40px; border-radius: 12px; color: white; text-align: center;">
+  <h1 style="color: white; margin: 0 0 15px 0; font-size: 2.5rem;">About Our Event Portal</h1>
+  <p style="font-size: 1.2rem; margin: 0; max-width: 800px; margin: 0 auto; opacity: 0.9;">
+    Deogiri College Event Portal is designed to showcase all college events, activities, and reports in one centralized location. This portal helps students, faculty, and staff stay updated with the latest events happening in different departments of our college.
   </p>
+</div>
 
-  <div class="grid" style="margin-top:16px">
-    <div class="card" style="grid-column: span 6">
-      <h4 style="margin-top:0;color:var(--primary)">For Students</h4>
-      <ul style="margin:0;padding-left:18px" class="muted">
-        <li>View all events without login</li>
-        <li>Search and filter events easily</li>
-        <li>Open event details and photo gallery</li>
-        <li>Download event report PDF</li>
-      </ul>
+<section class="card about-section" style="margin-top: -20px;">
+  <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 30px;">
+    <div class="feature-card">
+      <h3 style="color: var(--primary); margin-top: 0; font-size: 1.5rem; border-bottom: 2px solid var(--primary); padding-bottom: 10px; display: inline-block;">
+        Comprehensive Event Management
+      </h3>
+      <p style="margin: 20px 0; line-height: 1.6;">
+        Our portal provides comprehensive event management features including event registration, photo galleries, detailed reports, and downloadable resources. Faculty members can create and manage events, while students can browse, search, and access event details and reports.
+      </p>
+      <div class="feature-list">
+        <div style="display: flex; align-items: flex-start; margin: 15px 0;">
+          <span style="color: var(--primary); font-weight: bold; margin-right: 10px;">✓</span>
+          <span>Centralized event repository</span>
+        </div>
+        <div style="display: flex; align-items: flex-start; margin: 15px 0;">
+          <span style="color: var(--primary); font-weight: bold; margin-right: 10px;">✓</span>
+          <span>Real-time updates</span>
+        </div>
+        <div style="display: flex; align-items: flex-start; margin: 15px 0;">
+          <span style="color: var(--primary); font-weight: bold; margin-right: 10px;">✓</span>
+          <span>Easy navigation and search</span>
+        </div>
+        <div style="display: flex; align-items: flex-start; margin: 15px 0;">
+          <span style="color: var(--primary); font-weight: bold; margin-right: 10px;">✓</span>
+          <span>Resource downloads</span>
+        </div>
+      </div>
     </div>
-    <div class="card" style="grid-column: span 6">
-      <h4 style="margin-top:0;color:var(--primary)">For Faculty</h4>
-      <ul style="margin:0;padding-left:18px" class="muted">
-        <li>Secure admin login</li>
-        <li>Add, edit and delete events</li>
-        <li>Upload multiple photos event-wise</li>
-        <li>Maintain event reports for academic records</li>
-      </ul>
+    
+    <div class="feature-card">
+      <h3 style="color: var(--primary); margin-top: 0; font-size: 1.5rem; border-bottom: 2px solid var(--primary); padding-bottom: 10px; display: inline-block;">
+        Student Experience
+      </h3>
+      <p style="margin: 20px 0; line-height: 1.6;">
+        Designed with students in mind, our portal offers intuitive browsing and easy access to all college events and activities.
+      </p>
+      <div class="feature-list">
+        <div style="display: flex; align-items: flex-start; margin: 15px 0;">
+          <span style="color: var(--primary); font-weight: bold; margin-right: 10px;">✓</span>
+          <span>Browse upcoming events</span>
+        </div>
+        <div style="display: flex; align-items: flex-start; margin: 15px 0;">
+          <span style="color: var(--primary); font-weight: bold; margin-right: 10px;">✓</span>
+          <span>Access event reports</span>
+        </div>
+        <div style="display: flex; align-items: flex-start; margin: 15px 0;">
+          <span style="color: var(--primary); font-weight: bold; margin-right: 10px;">✓</span>
+          <span>View photo galleries</span>
+        </div>
+        <div style="display: flex; align-items: flex-start; margin: 15px 0;">
+          <span style="color: var(--primary); font-weight: bold; margin-right: 10px;">✓</span>
+          <span>Download resources</span>
+        </div>
+      </div>
+      
+      <h3 style="color: var(--primary); margin-top: 30px; font-size: 1.5rem; border-bottom: 2px solid var(--primary); padding-bottom: 10px; display: inline-block;">
+        Faculty Tools
+      </h3>
+      <p style="margin: 20px 0; line-height: 1.6;">
+        Powerful administrative tools for faculty to manage all event-related activities efficiently.
+      </p>
+      <div class="feature-list">
+        <div style="display: flex; align-items: flex-start; margin: 15px 0;">
+          <span style="color: var(--primary); font-weight: bold; margin-right: 10px;">✓</span>
+          <span>Create and manage events</span>
+        </div>
+        <div style="display: flex; align-items: flex-start; margin: 15px 0;">
+          <span style="color: var(--primary); font-weight: bold; margin-right: 10px;">✓</span>
+          <span>Upload event photos</span>
+        </div>
+        <div style="display: flex; align-items: flex-start; margin: 15px 0;">
+          <span style="color: var(--primary); font-weight: bold; margin-right: 10px;">✓</span>
+          <span>Generate event reports</span>
+        </div>
+        <div style="display: flex; align-items: flex-start; margin: 15px 0;">
+          <span style="color: var(--primary); font-weight: bold; margin-right: 10px;">✓</span>
+          <span>Track event participation</span>
+        </div>
+      </div>
     </div>
   </div>
-</section>
-
-<section class="card" style="margin-top:14px">
-  <h3 style="margin-top:0">About Deogiri College</h3>
-  <p class="muted">
-    Deogiri College is committed to providing a platform where students and faculty can showcase their talents,
-    participate in various events, and stay connected with the college community.
-  </p>
 </section>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

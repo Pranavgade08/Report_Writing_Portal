@@ -61,6 +61,21 @@ function db(): PDO
     } catch (Throwable $e) {
     }
 
+    try {
+        $pdo->exec(
+            "CREATE TABLE IF NOT EXISTS attendance_photos (
+              id INT AUTO_INCREMENT PRIMARY KEY,
+              event_id INT NOT NULL,
+              file_name VARCHAR(255) NOT NULL,
+              file_path VARCHAR(500) NOT NULL,
+              uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+              CONSTRAINT fk_attendance_event FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+              UNIQUE KEY uq_attendance_event (event_id)
+            )"
+        );
+    } catch (Throwable $e) {
+    }
+
     return $pdo;
 }
 

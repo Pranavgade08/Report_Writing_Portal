@@ -11,7 +11,13 @@ $title = $title ?? APP_NAME;
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title><?php echo h($title); ?></title>
-  <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/style.css" />
+  <!-- Using the new clean light theme -->
+  <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/style-light.css" />
+  <!-- Test CSS to verify loading -->
+  <style>
+    body { background: #ffffff !important; color: #1e293b !important; }
+    .test-button { background: #2563eb !important; color: white !important; padding: 10px 20px !important; border-radius: 8px !important; }
+  </style>
 </head>
 <body>
   <header class="nav <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/admin/') !== false) ? 'admin-nav' : ''; ?>">

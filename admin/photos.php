@@ -22,6 +22,10 @@ $photosStmt = db()->prepare('SELECT id, file_path, file_name, caption, uploaded_
 $photosStmt->execute([$eventId]);
 $photos = $photosStmt->fetchAll();
 
+$attStmt = db()->prepare('SELECT id, file_path, file_name, uploaded_at FROM attendance_photos WHERE event_id = ? LIMIT 1');
+$attStmt->execute([$eventId]);
+$attendance = $attStmt->fetch();
+
 $title = 'Upload Photos - ' . APP_NAME;
 ?>
 
@@ -55,6 +59,36 @@ $title = 'Upload Photos - ' . APP_NAME;
     <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
       <button class="btn primary" type="submit">Upload</button>
       <a class="btn" href="<?php echo BASE_URL; ?>/admin/events.php">Cancel</a>
+    </div>
+  </form>
+</section>
+
+<section class="card" style="margin-top:14px">
+  <h3 style="margin-top:0">Attendance Photo</h3>
+  <div class="muted" style="margin-top:-6px">Upload one attendance image for this event. It will be shown in the PDF as a full page.</div>
+
+  <?php if ($attendance): ?>
+    <div style="margin-top:12px">
+      <div class="card" style="padding:10px">
+        <img alt="Attendance photo" src="<?php echo h($attendance['file_path']); ?>" style="width:100%;max-height:520px;object-fit:contain;border-radius:12px;background:#fff" />
+        <div class="muted" style="margin-top:8px;font-size:12px">Uploaded: <?php echo h($attendance['uploaded_at']); ?></div>
+        <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+          <a class="btn danger" data-confirm="Delete attendance photo?" href="<?php echo BASE_URL; ?>/admin/attendance_delete.php?event_id=<?php echo (int)$eventId; ?>">Delete Attendance Photo</a>
+        </div>
+      </div>
+    </div>
+  <?php else: ?>
+    <div class="muted" style="margin-top:10px">No attendance photo uploaded yet.</div>
+  <?php endif; ?>
+
+  <form action="<?php echo BASE_URL; ?>/admin/attendance_upload.php" method="post" enctype="multipart/form-data" style="margin-top:14px">
+    <input type="hidden" name="event_id" value="<?php echo (int)$eventId; ?>" />
+    <div class="field">
+      <label><?php echo $attendance ? 'Replace attendance photo' : 'Upload attendance photo'; ?></label>
+      <input class="input" type="file" name="attendance" accept="image/*" required />
+    </div>
+    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn primary" type="submit"><?php echo $attendance ? 'Replace' : 'Upload'; ?></button>
     </div>
   </form>
 </section>
