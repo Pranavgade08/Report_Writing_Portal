@@ -105,7 +105,14 @@ $title = $event['title'] . ' - ' . APP_NAME;
       
       <!-- Hidden section for optimized PDF printing -->
       <div id="pdfContent" style="display:none;">
-        <h2>Event Report: <?php echo h($event['title']); ?></h2>
+        <div style="text-align:center; margin-bottom:15px;">
+          <img src="<?php echo BASE_URL; ?>/assets/images/deogirisymbol.jpeg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" style="height:80px; margin-bottom:8px;" alt="College Logo" />
+<div style="display:none; font-size:16px; font-weight:bold; margin-bottom:8px;">[College Logo]</div>
+          <h1 style="margin:0; font-size:20px;">Marathwada Shikshan Prasarak Mandal's</h1>
+          <h1 style="margin:0; font-size:20px;">Deogiri College, Chhatrapati Sambhajinagar</h1>
+        </div>
+        <h2 style="text-align:center; margin-top:0;">Event Report: <?php echo h($event['title']); ?></h2>
+        <p style="font-size:14px; margin:0 0 15px 0;"><strong>Department: <?php echo h($event['department_name']); ?></strong></p>
         <table style="width:100%; border-collapse: collapse; margin: 20px 0;">
           <tr>
             <td style="padding: 8px; border: 1px solid #ddd; width: 30%; font-weight: bold;">Event Type:</td>
@@ -152,12 +159,12 @@ $title = $event['title'] . ' - ' . APP_NAME;
         
         <h3>Event Photos</h3>
         <?php if ($photos): ?>
-          <div class="photo-grid" style="grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div class="pdf-photo-gallery">
             <?php foreach ($photos as $p): ?>
-              <div class="photo-item" style="text-align: center;">
-                <img src="<?php echo h($p['file_path']); ?>" style="height: 280px; width: 100%; object-fit: cover; border: 2px solid #e5e7eb; border-radius: 12px;" />
+              <div class="pdf-photo-item">
+                <img src="<?php echo h($p['file_path']); ?>" />
                 <?php if (!empty($p['caption'])): ?>
-                  <div class="photo-caption" style="margin-top: 10px; padding: 8px; font-weight: bold;"><?php echo h($p['caption']); ?></div>
+                  <div class="pdf-photo-caption"><?php echo h($p['caption']); ?></div>
                 <?php endif; ?>
               </div>
             <?php endforeach; ?>
@@ -169,23 +176,37 @@ $title = $event['title'] . ' - ' . APP_NAME;
         <?php if (!empty($attendancePhotos)): ?>
           <div style="page-break-before: always;">
             <h3>Attendance Photos</h3>
-            <div class="photo-grid" style="grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="pdf-photo-gallery">
               <?php foreach ($attendancePhotos as $ap): ?>
-                <div class="photo-item" style="text-align: center;">
-                  <img src="<?php echo h($ap['file_path']); ?>" style="height: 300px; width: 100%; object-fit: cover; border: 2px solid #e5e7eb; border-radius: 12px;" />
+                <div class="pdf-photo-item">
+                  <img src="<?php echo h($ap['file_path']); ?>" />
                 </div>
               <?php endforeach; ?>
             </div>
           </div>
         <?php endif; ?>
+        
+        <!-- HOD and Incharge Signatures -->
+        <div style="margin-top:40px; page-break-inside: avoid;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px;">
+            <div style="text-align:center;">
+              <p style="margin:0 0 5px 0; font-weight:bold; font-size:16px;"><?php echo h($event['hod_name'] ?: 'HOD Name'); ?></p>
+              <p style="margin:0; font-size:14px; color:#666;">Head of Department</p>
+            </div>
+            <div style="text-align:center;">
+              <p style="margin:0 0 5px 0; font-weight:bold; font-size:16px;"><?php echo h($event['incharge_name'] ?: 'Incharge Name'); ?></p>
+              <p style="margin:0; font-size:14px; color:#666;">Event Incharge</p>
+            </div>
+          </div>
+        </div>
       </div>
       <?php if (!$photos): ?>
         <div class="muted">No photos uploaded for this event yet.</div>
       <?php else: ?>
-        <div class="grid" style="margin-top:10px">
+        <div class="photo-gallery-container">
           <?php foreach ($photos as $p): ?>
-            <div class="card" style="grid-column: span 3; padding:10px">
-              <img alt="Event photo" src="<?php echo h($p['file_path']); ?>" style="width:100%;height:200px;object-fit:cover;border-radius:12px" />
+            <div class="photo-card">
+              <img alt="Event photo" src="<?php echo h($p['file_path']); ?>" />
               <?php if (!empty($p['caption'])): ?>
                 <div class="photo-caption"><?php echo h($p['caption']); ?></div>
               <?php endif; ?>
@@ -266,7 +287,83 @@ $title = $event['title'] . ' - ' . APP_NAME;
       }
       #pdfContent .photo-caption { margin-top: 8px; padding: 10px; border: 1px solid #e5e7eb; border-radius: 10px; background: #f8fafc; font-weight: 700; font-size: 16px; }
 
+      /* PDF Photo Gallery Styles */
+      #pdfContent .pdf-photo-gallery {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 20px 0;
+        page-break-inside: avoid;
+      }
+      
+      #pdfContent .pdf-photo-item {
+        text-align: center;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 12px;
+        background: #ffffff;
+        page-break-inside: avoid;
+      }
+      
+      #pdfContent .pdf-photo-item img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 10px;
+      }
+      
+      #pdfContent .pdf-photo-caption {
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+        background: #f8fafc;
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+        margin-top: 8px;
+      }
+
       .photo-caption { margin-top: 8px; padding: 10px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,0.65); font-weight: 800; }
+
+      /* Improved Photo Gallery Styles */
+      .photo-gallery-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 15px;
+      }
+      
+      .photo-card {
+        background: var(--card);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: 1px solid var(--border);
+      }
+      
+      .photo-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+      }
+      
+      .photo-card img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        display: block;
+      }
+      
+      .photo-card .photo-caption {
+        margin: 0;
+        border: none;
+        border-radius: 0;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        padding: 12px 16px;
+        font-size: 14px;
+        border-top: 1px solid var(--border);
+      }
 
       @media print {
         /* Reset body margins for printing */
@@ -439,13 +536,15 @@ $title = $event['title'] . ' - ' . APP_NAME;
       // Slice the canvas into page-sized pieces (prevents missing / half content)
       const pxPerMm = canvas.width / imgWidth;
       const pageHeightPx = Math.floor((usableHeight / imgWidth) * canvas.width);
-      const overlapPx = Math.floor(4 * pxPerMm); // small overlap so no lines get skipped
+      const overlapPx = Math.floor(2 * pxPerMm); // reduced overlap to avoid extra pages
 
       let yPx = 0;
       let pageIndex = 0;
 
       while (yPx < canvas.height) {
         const sliceHeightPx = Math.min(pageHeightPx, canvas.height - yPx);
+        // Skip tiny remaining slices that would create blank pages
+        if (sliceHeightPx < 20) break;
 
         const pageCanvas = document.createElement('canvas');
         pageCanvas.width = canvas.width;
@@ -454,7 +553,7 @@ $title = $event['title'] . ' - ' . APP_NAME;
         const ctx = pageCanvas.getContext('2d');
         ctx.drawImage(canvas, 0, yPx, canvas.width, sliceHeightPx, 0, 0, canvas.width, sliceHeightPx);
 
-        const sliceData = pageCanvas.toDataURL('image/jpeg', 0.75);
+        const sliceData = pageCanvas.toDataURL('image/jpeg', 0.82);
         const sliceHeightMm = Math.min(sliceHeightPx / pxPerMm, usableHeight);
 
         if (pageIndex > 0) {

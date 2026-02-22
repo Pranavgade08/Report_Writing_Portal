@@ -25,7 +25,9 @@ $event = [
     'objectives' => '',
     'outcomes' => '',
     'description' => '',
-    'featured' => 0
+    'featured' => 0,
+    'hod_name' => '',
+    'incharge_name' => ''
 ];
 
 if ($isEdit) {
@@ -62,6 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $event['objectives'] = trim((string)($_POST['objectives'] ?? ''));
     $event['outcomes'] = trim((string)($_POST['outcomes'] ?? ''));
     $event['description'] = trim((string)($_POST['description'] ?? ''));
+    $event['hod_name'] = trim((string)($_POST['hod_name'] ?? ''));
+    $event['incharge_name'] = trim((string)($_POST['incharge_name'] ?? ''));
     if ($hasFeaturedColumn) {
         $event['featured'] = (int)($_POST['featured'] ?? 0);
     } else {
@@ -78,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($isEdit) {
             if ($hasFeaturedColumn) {
                 $stmt = db()->prepare(
-                    'UPDATE events SET title=?, event_type=?, event_date=?, event_time=?, venue=?, department_id=?, academic_year_id=?, organizer=?, guest_speaker=?, participants_count=?, objectives=?, outcomes=?, description=?, featured=?, updated_at=NOW() WHERE id=?'
+                    'UPDATE events SET title=?, event_type=?, event_date=?, event_time=?, venue=?, department_id=?, academic_year_id=?, organizer=?, guest_speaker=?, participants_count=?, objectives=?, outcomes=?, description=?, featured=?, hod_name=?, incharge_name=?, updated_at=NOW() WHERE id=?'
                 );
                 $stmt->execute([
                     $event['title'],
@@ -95,6 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $event['outcomes'] !== '' ? $event['outcomes'] : null,
                     $event['description'] !== '' ? $event['description'] : null,
                     $event['featured'],
+                    $event['hod_name'],
+                    $event['incharge_name'],
                     $id
                 ]);
             } else {
@@ -125,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             if ($hasFeaturedColumn) {
                 $stmt = db()->prepare(
-                    'INSERT INTO events (title,event_type,event_date,event_time,venue,department_id,academic_year_id,organizer,guest_speaker,participants_count,objectives,outcomes,description,featured) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+                    'INSERT INTO events (title,event_type,event_date,event_time,venue,department_id,academic_year_id,organizer,guest_speaker,participants_count,objectives,outcomes,description,featured,hod_name,incharge_name) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
                 );
                 $stmt->execute([
                     $event['title'],
@@ -141,7 +147,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $event['objectives'] !== '' ? $event['objectives'] : null,
                     $event['outcomes'] !== '' ? $event['outcomes'] : null,
                     $event['description'] !== '' ? $event['description'] : null,
-                    $event['featured']
+                    $event['featured'],
+                    $event['hod_name'],
+                    $event['incharge_name']
                 ]);
             } else {
                 $stmt = db()->prepare(
@@ -278,6 +286,16 @@ $title = ($isEdit ? 'Edit Event' : 'Add New Event') . ' - ' . APP_NAME;
         <textarea name="description" placeholder="Write full event report description..." style="min-height: 150px;" ><?php echo h((string)($event['description'] ?? '')); ?></textarea>
       </div>
       
+      <div class="field" style="grid-column: span 6">
+        <label>HOD Name</label>
+        <input class="input" name="hod_name" value="<?php echo h((string)($event['hod_name'] ?? '')); ?>" placeholder="Eg: Dr. A. B. Sharma" />
+      </div>
+
+      <div class="field" style="grid-column: span 6">
+        <label>Incharge Name</label>
+        <input class="input" name="incharge_name" value="<?php echo h((string)($event['incharge_name'] ?? '')); ?>" placeholder="Eg: Prof. C. D. Patil" />
+      </div>
+
 <?php if ($hasFeaturedColumn): ?>
       <div class="field" style="grid-column:1/-1">
         <label>

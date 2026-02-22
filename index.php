@@ -231,11 +231,11 @@ $departments = db()->query(
   <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
     <div class="card contact-card">
       <h3>📍 Address</h3>
-      <p>Deogiri College<br>Aurangabad Road<br>Nanded, Maharashtra - 431602</p>
+      <p>Deogiri College<br>Chhatrapati Sambhajinagar<br>Maharashtra - 431001</p>
     </div>
     <div class="card contact-card">
       <h3>📞 Phone & Email</h3>
-      <p>Phone: +91-724-244-7777<br>Email: info@deogiricollege.edu.in</p>
+      <p>Phone: +91-7028952095<br>Email: info@deogiricollege.edu.in</p>
     </div>
     <div class="card contact-card">
       <h3>🏢 Find Us</h3>

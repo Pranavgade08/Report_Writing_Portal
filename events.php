@@ -37,7 +37,7 @@ if ($type !== '') {
 }
 
 $sql =
-    'SELECT e.id, e.title, e.event_type, e.event_date, e.venue, d.name AS department_name, y.year_label
+    'SELECT e.id, e.title, e.event_type, e.event_date, e.venue, e.featured, d.name AS department_name, y.year_label
      FROM events e
      JOIN departments d ON d.id = e.department_id
      JOIN academic_years y ON y.id = e.academic_year_id';
@@ -46,7 +46,7 @@ if ($where) {
     $sql .= ' WHERE ' . implode(' AND ', $where);
 }
 
-$sql .= ' ORDER BY e.event_date DESC, e.id DESC';
+$sql .= ' ORDER BY e.featured DESC, e.event_date DESC, e.id DESC';
 
 $stmt = db()->prepare($sql);
 $stmt->execute($params);
@@ -55,7 +55,102 @@ $events = $stmt->fetchAll();
 $title = 'Events - ' . APP_NAME;
 ?>
 
+<?php
+// Separate featured and regular events
+$featuredEvents = array_filter($events, function($e) { return isset($e['featured']) && $e['featured'] == 1; });
+$regularEvents = array_filter($events, function($e) { return !isset($e['featured']) || $e['featured'] != 1; });
+
+// Debug: Count featured events
+$featuredCount = count($featuredEvents);
+$regularCount = count($regularEvents);
+$totalCount = count($events);
+?>
+
 <h2 class="section-title">Browse Events</h2>
+
+<!-- Debug Info (remove in production) -->
+<div style="background: #f0f9ff; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 12px;">
+  <strong>Debug:</strong> Total Events: <?php echo $totalCount; ?> | Featured: <?php echo $featuredCount; ?> | Regular: <?php echo $regularCount; ?>
+</div>
+
+<?php if (!empty($featuredEvents)): ?>
+<section class="featured-events-section" style="margin-bottom:30px;">
+  <h3 style="margin:0 0 20px 0; display:flex;align-items:center;gap:10px;">
+    <span style="background:linear-gradient(135deg, #fbbf24, #f59e0b); color:white; padding:8px 16px; border-radius:20px; font-weight:800; font-size:14px;">FEATURED</span>
+    Featured Events
+  </h3>
+  
+  <div class="featured-events-grid">
+    <?php foreach ($featuredEvents as $e): ?>
+      <div class="featured-event-card">
+        <div class="featured-badge">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          Featured
+        </div>
+        <h4 style="margin:12px 0 8px; font-size:18px; line-height:1.3;"><?php echo h($e['title']); ?></h4>
+        <div class="muted" style="font-size:14px; margin-bottom:12px;">
+          <div style="margin-bottom:4px;">📍 <?php echo h($e['venue']); ?></div>
+          <div style="margin-bottom:4px;">📅 <?php echo h($e['event_date']); ?></div>
+          <div>🏛️ <?php echo h($e['department_name']); ?></div>
+        </div>
+        <div style="display:flex;gap:8px; align-items:center; justify-content:space-between;">
+          <span class="badge" style="background:linear-gradient(135deg, #fbbf24, #f59e0b); color:white; border:none;"><?php echo h($e['event_type']); ?></span>
+          <a class="btn primary" href="<?php echo BASE_URL; ?>/event.php?id=<?php echo (int)$e['id']; ?>" style="padding:8px 16px; font-size:14px;">View Event</a>
+        </div>
+      </div>
+    <?php endforeach; ?>
+  </div>
+</section>
+
+<style>
+.featured-events-section {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-radius: 20px;
+  padding: 25px;
+  border: 2px solid #f59e0b;
+  box-shadow: 0 10px 30px rgba(245, 158, 11, 0.15);
+}
+
+.featured-events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.featured-event-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f59e0b;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.featured-event-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+}
+
+.featured-badge {
+  position: absolute;
+  top: -10px;
+  right: 15px;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+</style>
+<?php endif; ?>
 
 <section class="card">
   <form method="get" class="filters">
@@ -119,13 +214,13 @@ $title = 'Events - ' . APP_NAME;
       </tr>
     </thead>
     <tbody>
-      <?php if (!$events): ?>
+      <?php if (empty($regularEvents)): ?>
         <tr>
           <td colspan="6" class="muted">No events found.</td>
         </tr>
       <?php endif; ?>
 
-      <?php foreach ($events as $e): ?>
+      <?php foreach ($regularEvents as $e): ?>
         <tr>
           <td><?php echo h($e['title']); ?><div class="muted"><?php echo h($e['venue']); ?></div></td>
           <td><span class="badge"><?php echo h($e['event_type']); ?></span></td>

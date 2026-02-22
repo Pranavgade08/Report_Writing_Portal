@@ -44,11 +44,27 @@ function db(): PDO
         throw $lastError instanceof PDOException ? $lastError : new PDOException('Database connection failed');
     }
 
+    // Auto-migration: add missing columns
     try {
         $col = $pdo->query("SHOW COLUMNS FROM events LIKE 'featured'")->fetch();
         if (!$col) {
             $pdo->exec("ALTER TABLE events ADD COLUMN featured TINYINT(1) NOT NULL DEFAULT 0");
-            $pdo->exec("CREATE INDEX idx_events_featured ON events (featured)");
+        }
+    } catch (Throwable $e) {
+    }
+
+    try {
+        $col = $pdo->query("SHOW COLUMNS FROM events LIKE 'hod_name'")->fetch();
+        if (!$col) {
+            $pdo->exec("ALTER TABLE events ADD COLUMN hod_name VARCHAR(255) DEFAULT ''");
+        }
+    } catch (Throwable $e) {
+    }
+
+    try {
+        $col = $pdo->query("SHOW COLUMNS FROM events LIKE 'incharge_name'")->fetch();
+        if (!$col) {
+            $pdo->exec("ALTER TABLE events ADD COLUMN incharge_name VARCHAR(255) DEFAULT ''");
         }
     } catch (Throwable $e) {
     }
@@ -56,7 +72,7 @@ function db(): PDO
     try {
         $col = $pdo->query("SHOW COLUMNS FROM event_photos LIKE 'caption'")->fetch();
         if (!$col) {
-            $pdo->exec("ALTER TABLE event_photos ADD COLUMN caption VARCHAR(255) NULL");
+            $pdo->exec("ALTER TABLE event_photos ADD COLUMN caption VARCHAR(255) DEFAULT ''");
         }
     } catch (Throwable $e) {
     }

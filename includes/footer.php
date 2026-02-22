@@ -6,7 +6,7 @@
           <h3>Deogiri College</h3>
           <p>Empowering education through technology. Our Event Portal connects students, faculty, and staff in a unified platform.</p>
           <div class="contact-info">
-            <p>📍 Aurangabad, Maharashtra</p>
+            <p>📍 Chhatrapati Sambhajinagar, Maharashtra</p>
             <p>📧 info@deogiricollege.edu</p>
             <p>📞 +91 12345 67890</p>
           </div>

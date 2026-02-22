@@ -11,6 +11,7 @@ $title = $title ?? APP_NAME;
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title><?php echo h($title); ?></title>
+  <link rel="icon" type="image/jpeg" href="<?php echo BASE_URL; ?>/assets/images/deogirisymbol.jpeg" />
   <!-- Using the new clean light theme -->
   <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/style-light.css" />
   <!-- Test CSS to verify loading -->

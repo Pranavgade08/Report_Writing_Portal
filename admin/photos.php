@@ -45,13 +45,24 @@ $title = 'Upload Photos - ' . APP_NAME;
 </section>
 
 <section class="card" style="margin-top:14px">
+  <?php if (isset($_GET['error']) && $_GET['error'] === 'min_photos'): ?>
+    <div class="alert error" style="margin-bottom:12px">
+      <strong>Minimum 3 photos required!</strong> Each event must have at least 3 photos. Please upload more photos to meet this requirement.
+    </div>
+  <?php endif; ?>
+  
   <form action="<?php echo BASE_URL; ?>/admin/photos_upload.php" method="post" enctype="multipart/form-data">
     <input type="hidden" name="event_id" value="<?php echo (int)$eventId; ?>" />
 
     <div class="field">
-      <label>Select multiple photos</label>
+      <label>Select multiple photos (Minimum 3 required)</label>
       <input class="input" type="file" name="photos[]" id="photosInput" multiple accept="image/*" required />
-      <div class="muted" style="margin-top:6px">Tip: You can select many photos at once.</div>
+      <div class="muted" style="margin-top:6px">
+        <strong>Important:</strong> Each event must have at least 3 photos. You can select many photos at once.
+        <?php if (count($photos) > 0): ?>
+          <br>Current photos: <?php echo count($photos); ?> uploaded.
+        <?php endif; ?>
+      </div>
     </div>
 
     <div id="preview" class="grid" style="margin-top:12px"></div>

@@ -38,6 +38,27 @@ if (!is_dir($targetDirAbs)) {
 $files = $_FILES['photos'];
 $count = is_array($files['name']) ? count($files['name']) : 0;
 
+// Check current photo count
+$currentPhotosStmt = db()->prepare('SELECT COUNT(*) as count FROM event_photos WHERE event_id = ?');
+$currentPhotosStmt->execute([$eventId]);
+$currentPhotoCount = (int)$currentPhotosStmt->fetch()['count'];
+
+$uploadedCount = 0;
+for ($i = 0; $i < $count; $i++) {
+    if (($files['error'][$i] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+        continue;
+    }
+    $uploadedCount++;
+}
+
+$totalPhotosAfterUpload = $currentPhotoCount + $uploadedCount;
+
+// Redirect with error if less than 3 total photos
+if ($totalPhotosAfterUpload < 3) {
+    header('Location: ' . BASE_URL . '/admin/photos.php?event_id=' . $eventId . '&error=min_photos');
+    exit;
+}
+
  $captions = $_POST['captions'] ?? [];
  if (!is_array($captions)) {
      $captions = [];
