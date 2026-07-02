@@ -36,14 +36,16 @@ $title = 'Admin Login - ' . APP_NAME;
         <div class="alert error" style="margin-bottom:12px"><?php echo h($error); ?></div>
       <?php endif; ?>
 
-      <form method="post">
+      <form method="post" id="loginForm">
         <div class="field">
           <label>Username</label>
-          <input class="input" name="username" placeholder="admin" autocomplete="username" />
+          <!-- FIX: Added 'required' attribute to prevent empty submission at HTML level -->
+          <input class="input" name="username" id="username" placeholder="admin" autocomplete="username" required />
         </div>
         <div class="field" style="margin-top:10px">
           <label>Password</label>
-          <input class="input" type="password" name="password" placeholder="Password" autocomplete="current-password" />
+          <!-- FIX: Added 'required' attribute to prevent empty submission at HTML level -->
+          <input class="input" type="password" name="password" id="password" placeholder="Password" autocomplete="current-password" required />
         </div>
         <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn primary" type="submit">Login</button>
@@ -67,3 +69,27 @@ $title = 'Admin Login - ' . APP_NAME;
 </div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+
+<script>
+// FIX: JavaScript validation to catch empty/whitespace-only inputs before form submission
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    var username = document.getElementById('username').value.trim();
+    var password = document.getElementById('password').value;
+
+    // Check if username is empty or only whitespace
+    if (username === '') {
+        e.preventDefault();
+        alert('Please enter your username.');
+        document.getElementById('username').focus();
+        return false;
+    }
+
+    // Check if password is empty
+    if (password === '') {
+        e.preventDefault();
+        alert('Please enter your password.');
+        document.getElementById('password').focus();
+        return false;
+    }
+});
+</script>

@@ -97,11 +97,12 @@ $title = 'Manage Academic Years - ' . APP_NAME;
 
 <section class="card" style="margin-top:14px">
     <h3 style="margin-top:0">Add New Academic Year</h3>
-    <form method="post">
+    <!-- FIX: Added id for JS validation targeting -->
+    <form method="post" id="addYearForm">
         <div class="grid">
             <div class="field" style="grid-column: span 6">
                 <label>Year Label</label>
-                <input class="input" name="year_label" placeholder="Eg: 2024-25" required />
+                <input class="input" name="year_label" id="add_year_label" placeholder="Eg: 2024-25" required />
             </div>
             <div class="field" style="grid-column: span 6">
                 <label>Active Status</label>
@@ -151,7 +152,8 @@ $title = 'Manage Academic Years - ' . APP_NAME;
                 <!-- Edit Form (Initially Hidden) -->
                 <tr id="edit_form_<?php echo (int)$year['id']; ?>" style="display:none;">
                     <td colspan="3">
-                        <form method="post" style="padding:10px;background:var(--bg);border-radius:10px;">
+                        <!-- FIX: Added class for JS validation targeting on all edit forms -->
+                        <form method="post" class="editYearForm" style="padding:10px;background:var(--bg);border-radius:10px;">
                             <input type="hidden" name="id" value="<?php echo (int)$year['id']; ?>" />
                             <div class="grid">
                                 <div class="field" style="grid-column: span 4">
@@ -179,3 +181,33 @@ $title = 'Manage Academic Years - ' . APP_NAME;
 </section>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+
+<script>
+// FIX: JavaScript validation for Add Academic Year form
+// Catches empty/whitespace-only year labels before server submission
+document.getElementById('addYearForm').addEventListener('submit', function(e) {
+    var yearInput = document.getElementById('add_year_label');
+    var yearLabel = yearInput.value.trim();
+    if (yearLabel === '') {
+        e.preventDefault();
+        alert('Year label is required. Please enter a value (e.g., 2024-25).');
+        yearInput.focus();
+        return false;
+    }
+});
+
+// FIX: JavaScript validation for all Edit Academic Year forms
+// Uses class selector to handle dynamically generated edit forms
+document.querySelectorAll('.editYearForm').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+        var yearInput = form.querySelector('input[name="year_label"]');
+        var yearLabel = yearInput.value.trim();
+        if (yearLabel === '') {
+            e.preventDefault();
+            alert('Year label is required. Please enter a value (e.g., 2024-25).');
+            yearInput.focus();
+            return false;
+        }
+    });
+});
+</script>

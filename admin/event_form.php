@@ -207,11 +207,12 @@ $title = ($isEdit ? 'Edit Event' : 'Add New Event') . ' - ' . APP_NAME;
     <div class="alert success" style="margin-bottom:12px"><?php echo h($success); ?></div>
   <?php endif; ?>
 
-  <form method="post">
+  <!-- FIX: Added id and novalidate to handle validation via JS with trim() support -->
+  <form method="post" id="eventForm" novalidate>
     <div class="grid">
       <div class="field" style="grid-column: span 6">
         <label>Event Title</label>
-        <input class="input" name="title" value="<?php echo h((string)$event['title']); ?>" placeholder="Eg: BSc IT Career Guidance" required />
+        <input class="input" name="title" id="title" value="<?php echo h((string)$event['title']); ?>" placeholder="Eg: BSc IT Career Guidance" required />
       </div>
 
       <div class="field" style="grid-column: span 3">
@@ -230,7 +231,7 @@ $title = ($isEdit ? 'Edit Event' : 'Add New Event') . ' - ' . APP_NAME;
 
       <div class="field" style="grid-column: span 3">
         <label>Date</label>
-        <input class="input" type="date" name="event_date" value="<?php echo h((string)$event['event_date']); ?>" required />
+        <input class="input" type="date" name="event_date" id="event_date" value="<?php echo h((string)$event['event_date']); ?>" required />
       </div>
 
       <div class="field" style="grid-column: span 3">
@@ -240,17 +241,17 @@ $title = ($isEdit ? 'Edit Event' : 'Add New Event') . ' - ' . APP_NAME;
 
       <div class="field" style="grid-column: span 6">
         <label>Venue</label>
-        <input class="input" name="venue" value="<?php echo h((string)$event['venue']); ?>" placeholder="Eg: Seminar Hall" required style="min-height: 40px;" />
+        <input class="input" name="venue" id="venue" value="<?php echo h((string)$event['venue']); ?>" placeholder="Eg: Seminar Hall" required style="min-height: 40px;" />
       </div>
 
       <div class="field" style="grid-column: span 6">
         <label>Organizer / Department Name</label>
-        <input class="input" name="organizer" value="<?php echo h((string)$event['organizer']); ?>" placeholder="Eg: Department of Information Technology" required style="min-height: 40px;" />
+        <input class="input" name="organizer" id="organizer" value="<?php echo h((string)$event['organizer']); ?>" placeholder="Eg: Department of Information Technology" required style="min-height: 40px;" />
       </div>
 
       <div class="field" style="grid-column: span 6">
         <label>Department (for filtering)</label>
-        <select name="department_id" required>
+        <select name="department_id" id="department_id" required>
           <?php foreach ($departments as $d): ?>
             <option value="<?php echo (int)$d['id']; ?>" <?php echo (int)$event['department_id'] === (int)$d['id'] ? 'selected' : ''; ?>><?php echo h($d['name']); ?></option>
           <?php endforeach; ?>
@@ -259,7 +260,7 @@ $title = ($isEdit ? 'Edit Event' : 'Add New Event') . ' - ' . APP_NAME;
 
       <div class="field" style="grid-column: span 6">
         <label>Academic Year (for filtering)</label>
-        <select name="academic_year_id" required>
+        <select name="academic_year_id" id="academic_year_id" required>
           <?php foreach ($years as $y): ?>
             <option value="<?php echo (int)$y['id']; ?>" <?php echo (int)$event['academic_year_id'] === (int)$y['id'] ? 'selected' : ''; ?>><?php echo h($y['year_label']); ?></option>
           <?php endforeach; ?>
@@ -314,3 +315,46 @@ $title = ($isEdit ? 'Edit Event' : 'Add New Event') . ' - ' . APP_NAME;
 </section>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+
+<script>
+// FIX: JavaScript validation to catch empty/whitespace-only inputs before server submission
+// This prevents round-trip to server for clearly invalid data
+document.getElementById('eventForm').addEventListener('submit', function(e) {
+    // Helper: trim and check if value is empty
+    function isEmpty(id, fieldName) {
+        var el = document.getElementById(id);
+        if (!el) return false;
+        var val = el.value.trim();
+        if (val === '') {
+            e.preventDefault();
+            alert(fieldName + ' is required. Please enter a value.');
+            el.focus();
+            return true;
+        }
+        return false;
+    }
+
+    // Validate required text fields - catch whitespace-only submissions
+    if (isEmpty('title', 'Event Title')) return false;
+    if (isEmpty('venue', 'Venue')) return false;
+    if (isEmpty('organizer', 'Organizer / Department Name')) return false;
+    if (isEmpty('event_date', 'Event Date')) return false;
+
+    // Validate select fields
+    var deptId = document.getElementById('department_id');
+    if (deptId && (deptId.value === '' || parseInt(deptId.value) <= 0)) {
+        e.preventDefault();
+        alert('Please select a department.');
+        deptId.focus();
+        return false;
+    }
+
+    var yearId = document.getElementById('academic_year_id');
+    if (yearId && (yearId.value === '' || parseInt(yearId.value) <= 0)) {
+        e.preventDefault();
+        alert('Please select an academic year.');
+        yearId.focus();
+        return false;
+    }
+});
+</script>

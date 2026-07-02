@@ -99,11 +99,12 @@ $title = 'Manage Departments - ' . APP_NAME;
 
 <section class="card" style="margin-top:14px">
     <h3 style="margin-top:0">Add New Department</h3>
-    <form method="post">
+    <!-- FIX: Added id for JS validation targeting -->
+    <form method="post" id="addDeptForm">
         <div class="grid">
             <div class="field" style="grid-column: span 6">
                 <label>Department Name</label>
-                <input class="input" name="name" placeholder="Eg: Computer Science" required />
+                <input class="input" name="name" id="add_name" placeholder="Eg: Computer Science" required />
             </div>
             <div class="field" style="grid-column: span 6">
                 <label>Short Name</label>
@@ -148,7 +149,8 @@ $title = 'Manage Departments - ' . APP_NAME;
                 <!-- Edit Form (Initially Hidden) -->
                 <tr id="edit_form_<?php echo (int)$dept['id']; ?>" style="display:none;">
                     <td colspan="3">
-                        <form method="post" style="padding:10px;background:var(--bg);border-radius:10px;">
+                        <!-- FIX: Added class for JS validation targeting on all edit forms -->
+                        <form method="post" class="editDeptForm" style="padding:10px;background:var(--bg);border-radius:10px;">
                             <input type="hidden" name="id" value="<?php echo (int)$dept['id']; ?>" />
                             <div class="grid">
                                 <div class="field" style="grid-column: span 4">
@@ -177,3 +179,33 @@ $title = 'Manage Departments - ' . APP_NAME;
 </section>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+
+<script>
+// FIX: JavaScript validation for Add Department form
+// Catches empty/whitespace-only department names before server submission
+document.getElementById('addDeptForm').addEventListener('submit', function(e) {
+    var nameInput = document.getElementById('add_name');
+    var name = nameInput.value.trim();
+    if (name === '') {
+        e.preventDefault();
+        alert('Department name is required. Please enter a value.');
+        nameInput.focus();
+        return false;
+    }
+});
+
+// FIX: JavaScript validation for all Edit Department forms
+// Uses class selector to handle dynamically generated edit forms
+document.querySelectorAll('.editDeptForm').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+        var nameInput = form.querySelector('input[name="name"]');
+        var name = nameInput.value.trim();
+        if (name === '') {
+            e.preventDefault();
+            alert('Department name is required. Please enter a value.');
+            nameInput.focus();
+            return false;
+        }
+    });
+});
+</script>
